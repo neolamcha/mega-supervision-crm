@@ -83,12 +83,11 @@ export function createApi(): AxiosInstance {
             { refreshToken },
           );
 
-          const { token, refreshToken: newRefreshToken } = response.data.data;
-          await AsyncStorage.setItem(TOKEN_KEY, token);
-          await AsyncStorage.setItem(REFRESH_TOKEN_KEY, newRefreshToken);
+          const { accessToken } = response.data.data;
+          await AsyncStorage.setItem(TOKEN_KEY, accessToken);
 
-          processQueue(null, token);
-          originalRequest.headers.Authorization = `Bearer ${token}`;
+          processQueue(null, accessToken);
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return api(originalRequest);
         } catch (refreshError) {
           processQueue(refreshError, null);

@@ -94,7 +94,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   user: User;
-  token: string;
+  accessToken: string;
   refreshToken: string;
 }
 
@@ -108,8 +108,7 @@ export interface RefreshTokenRequest {
 }
 
 export interface RefreshTokenResponse {
-  token: string;
-  refreshToken: string;
+  accessToken: string;
 }
 
 export interface CalibrateRequest {

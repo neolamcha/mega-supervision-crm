@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await authApi.login(data);
       if (response.success && response.data) {
-        await storeTokens(response.data.token, response.data.refreshToken);
+        await storeTokens(response.data.accessToken, response.data.refreshToken);
         await storeUser(response.data.user);
         dispatch({
           type: 'LOGIN_SUCCESS',
