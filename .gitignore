@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.next/
+*.log
+.env
+.env.local
+.env.production
+uploads/apk/*.apk
+.mega-backend/
