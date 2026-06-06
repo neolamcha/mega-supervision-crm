@@ -58,6 +58,11 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
+  const httpAdapter = app.getHttpAdapter();
+  httpAdapter.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
   const port = process.env.PORT || process.env.APP_PORT || 3000;
   await app.listen(port, '0.0.0.0');
   logger.log(`Application running on port ${port}`);
