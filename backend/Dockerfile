@@ -27,4 +27,4 @@ USER nestjs
 
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "node dist/database/seeds/seed.js || true; node dist/main"]
