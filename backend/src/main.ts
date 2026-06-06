@@ -12,7 +12,7 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api/v1', { exclude: ['health'] });
 
   const corsOrigins = process.env.APP_ENV === 'production'
     ? true
@@ -57,11 +57,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
-
-  const httpAdapter = app.getHttpAdapter();
-  httpAdapter.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
-  });
 
   const port = process.env.PORT || process.env.APP_PORT || 3000;
   await app.listen(port, '0.0.0.0');
