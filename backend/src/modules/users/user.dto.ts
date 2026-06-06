@@ -41,10 +41,10 @@ export class CreateUserDto {
   @MinLength(8, { message: 'Le mot de passe doit contenir au moins 8 caractères' })
   motDePasse: string;
 
-  @ApiProperty({ enum: UserRole, example: UserRole.DELEGUE, description: 'Rôle' })
+  @ApiProperty({ enum: UserRole, example: UserRole.DELEGUE, description: 'Rôle', default: UserRole.DELEGUE })
+  @IsOptional()
   @IsEnum(UserRole, { message: 'Rôle invalide' })
-  @IsNotEmpty({ message: 'Le rôle est obligatoire' })
-  role: UserRole;
+  role?: UserRole = UserRole.DELEGUE;
 }
 
 export class UpdateUserDto {

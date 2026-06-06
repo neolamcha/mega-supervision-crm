@@ -45,7 +45,7 @@ export default function DelegateForm({ delegate, onSuccess, onCancel }: Delegate
         await users.update(delegate.id, data);
         addToast('Délégué modifié avec succès', 'success');
       } else {
-        await users.create(data);
+        await users.create({ ...data, role: 'delegue' });
         addToast('Délégué créé avec succès', 'success');
       }
       onSuccess();

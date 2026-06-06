@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from '../../database/entities/user.entity';
+import { User, UserRole } from '../../database/entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Injectable()
@@ -55,6 +55,7 @@ export class UsersService {
 
     const user = this.userRepository.create({
       ...createUserDto,
+      role: createUserDto.role || UserRole.DELEGUE,
       motDePasse: hashedPassword,
       premierConnexion: true,
       estActif: true,

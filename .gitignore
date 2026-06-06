@@ -6,4 +6,6 @@ dist/
 .env.local
 .env.production
 **/uploads/apk/*.apk
+mobile/MegaSupervision-*.apk
+.gradle/
 .mega-backend/
