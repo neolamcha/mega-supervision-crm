@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.megasupervision"
     android:versionCode="1"
     android:versionName="1.0.0">
@@ -21,6 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="false"
         android:theme="@style/AppTheme"
+        tools:replace="android:label"
         android:supportsRtl="true">
 
         <activity

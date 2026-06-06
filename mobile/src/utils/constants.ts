@@ -1,7 +1,7 @@
 // Pour le développement local sur émulateur Android : http://10.0.2.2:3000/api/v1
 // Pour le développement local sur appareil physique : http://<VOTRE_IP>:3000/api/v1
 // Pour la production : https://api.mega-supervision.fr/api/v1
-export const API_BASE_URL = 'http://10.0.2.2:3000/api/v1';
+export const API_BASE_URL = 'https://backend-production-6be48.up.railway.app/api/v1';
 
 export const TRIGGER_RADIUS = 4;
 
