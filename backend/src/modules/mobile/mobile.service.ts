@@ -10,7 +10,7 @@ export class MobileService {
     buildNumber: 1,
     releaseDate: '2026-06-06',
     minAndroidVersion: '8.0',
-    size: '25 MB',
+    size: '61 MB',
     changelog: [
       'Première version de Mega Supervision',
       'Calibrage GPS des prospects',

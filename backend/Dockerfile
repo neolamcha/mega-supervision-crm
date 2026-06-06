@@ -23,8 +23,8 @@ COPY --from=builder /app/package.json ./
 
 RUN mkdir -p /app/uploads/apk && chown -R nestjs:nodejs /app
 
-# Télécharger l'APK depuis GitHub Releases (à décommenter quand le release existe)
-# ADD https://github.com/neolamcha/mega-supervision-crm/releases/download/v1.0.0/MegaSupervision-v1.0.0.apk /app/uploads/apk/MegaSupervision-v1.0.0.apk
+# Télécharger l'APK depuis GitHub Releases
+ADD https://github.com/neolamcha/mega-supervision-crm/releases/download/v1.0.0/MegaSupervision-v1.0.0.apk /app/uploads/apk/MegaSupervision-v1.0.0.apk
 
 USER nestjs
 

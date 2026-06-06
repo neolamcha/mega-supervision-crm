@@ -262,7 +262,7 @@ export default function LandingPage() {
                 ))}
               </ul>
               <div className="flex flex-wrap gap-4 pt-4">
-                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white shadow-lg rounded-xl px-8" onClick={() => window.open('/api/mobile/apk', '_blank')}>
+                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white shadow-lg rounded-xl px-8" onClick={() => window.open('https://github.com/neolamcha/mega-supervision-crm/releases/download/v1.0.0/MegaSupervision-v1.0.0.apk', '_blank')}>
                   <Download className="mr-2 h-5 w-5" />
                   Télécharger l&apos;APK Android
                 </Button>
@@ -271,7 +271,7 @@ export default function LandingPage() {
                   iOS (Bientôt)
                 </Button>
               </div>
-              <p className="text-sm text-gray-400">Version 1.0 • Compatible Android 8+ • Poids: 25 MB</p>
+              <p className="text-sm text-gray-400">Version 1.0 • Compatible Android 8+ • Poids: 61 MB</p>
             </div>
             <div className="relative hidden lg:block">
               <div className="relative mx-auto w-72">
