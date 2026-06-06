@@ -1,14 +1,12 @@
 import { Platform, PermissionsAndroid } from 'react-native';
-import BackgroundGeolocation, {
-  Location,
-  LocationErrorCode,
-} from 'react-native-background-geolocation';
+import Geolocation from '@react-native-community/geolocation';
 import { GPS_UPDATE_INTERVAL, GPS_SIGNIFICANT_CHANGE, TRIGGER_RADIUS } from '../utils/constants';
 import { haversineDistance } from '../utils/haversine';
 import { getCalibratedProspects } from './database';
 
 let isTracking = false;
 let currentPosition: { latitude: number; longitude: number } | null = null;
+let watchId: number | null = null;
 let positionListeners: Array<(pos: { latitude: number; longitude: number; accuracy?: number }) => void> = [];
 let proximityListeners: Array<(prospectId: string, distance: number) => void> = [];
 let proximityInterval: ReturnType<typeof setInterval> | null = null;
@@ -77,39 +75,24 @@ export async function startTracking(): Promise<boolean> {
   if (!hasPermission) return false;
 
   try {
-    await BackgroundGeolocation.ready({
-      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-      distanceFilter: GPS_SIGNIFICANT_CHANGE,
-      stationaryRadius: 25,
-      locationUpdateInterval: GPS_UPDATE_INTERVAL,
-      fastestLocationUpdateInterval: 2000,
-      foregroundService: true,
-      foregroundServiceTitle: 'Mega Supervision',
-      foregroundServiceText: 'Suivi de position actif',
-      startOnBoot: false,
-      stopOnTerminate: false,
-      enableHeadless: true,
-      notificationPriority: 'PRIORITY_HIGH',
-      showsBackgroundLocationIndicator: true,
-      pausesLocationUpdatesAutomatically: false,
-      debug: false,
-    });
+    watchId = Geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        notifyPosition({ latitude, longitude, accuracy: accuracy ?? undefined });
+      },
+      (error) => {
+        console.warn('Geolocation error:', error);
+      },
+      {
+        enableHighAccuracy: true,
+        distanceFilter: GPS_SIGNIFICANT_CHANGE,
+        interval: GPS_UPDATE_INTERVAL,
+        fastestInterval: 2000,
+        showLocationDialog: true,
+      },
+    );
 
-    BackgroundGeolocation.onLocation((location: Location) => {
-      if (location.coords) {
-        notifyPosition({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          accuracy: location.coords.accuracy,
-        });
-      }
-    }, (error: LocationErrorCode) => {
-      console.warn('BackgroundGeolocation location error:', error);
-    });
-
-    await BackgroundGeolocation.start();
     isTracking = true;
-
     startProximityChecking();
 
     return true;
@@ -120,10 +103,11 @@ export async function startTracking(): Promise<boolean> {
 }
 
 export async function stopTracking(): Promise<void> {
-  if (!isTracking) return;
+  if (!isTracking || watchId === null) return;
 
   try {
-    await BackgroundGeolocation.stop();
+    Geolocation.clearWatch(watchId);
+    watchId = null;
     isTracking = false;
     stopProximityChecking();
   } catch (error) {
@@ -141,25 +125,24 @@ export function getCurrentPositionSync(): { latitude: number; longitude: number 
 
 export function getCurrentPosition(): Promise<{ latitude: number; longitude: number; accuracy?: number }> {
   return new Promise((resolve, reject) => {
-    BackgroundGeolocation.getCurrentPosition(
-      { samples: 1, timeout: 10000 },
-      (location: Location) => {
+    Geolocation.getCurrentPosition(
+      (position) => {
         const pos = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          accuracy: location.coords.accuracy,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy ?? undefined,
         };
         currentPosition = { latitude: pos.latitude, longitude: pos.longitude };
         resolve(pos);
       },
-      (error: LocationErrorCode) => {
+      (error) => {
         if (currentPosition) {
           resolve({ ...currentPosition, accuracy: 0 });
         } else {
-          reject(new Error('Impossible d\'obtenir la position: ' + JSON.stringify(error)));
+          reject(new Error('Impossible d\'obtenir la position: ' + error.message));
         }
       },
-      { enableHighAccuracy: true, timeout: 10000 },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 },
     );
   });
 }
@@ -209,35 +192,7 @@ function stopProximityChecking() {
 }
 
 export async function setupGeofences(): Promise<void> {
-  try {
-    const prospects = await getCalibratedProspects();
-
-    const geofences = prospects
-      .filter((p) => p.latitude && p.longitude)
-      .map((p) => ({
-        identifier: `prospect_${p.id}`,
-        latitude: p.latitude,
-        longitude: p.longitude,
-        radius: TRIGGER_RADIUS,
-        notifyOnEntry: true,
-        notifyOnExit: true,
-        notifyOnDwell: true,
-        loiteringDelay: 10000,
-        extras: { prospectId: p.id },
-      }));
-
-    if (geofences.length > 0) {
-      await BackgroundGeolocation.addGeofences(geofences);
-    }
-  } catch (error) {
-    console.warn('Geofence setup error:', error);
-  }
 }
 
 export async function removeAllGeofences(): Promise<void> {
-  try {
-    await BackgroundGeolocation.removeGeofences();
-  } catch (error) {
-    console.warn('Remove geofences error:', error);
-  }
 }

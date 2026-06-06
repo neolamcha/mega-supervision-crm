@@ -148,7 +148,7 @@ export const authApi = {
     return response.data;
   },
 
-  changePassword: async (data: { currentPassword: string; newPassword: string }): Promise<ApiResponse<null>> => {
+  changePassword: async (data: { motDePasseActuel: string; nouveauMotDePasse: string; confirmation: string }): Promise<ApiResponse<null>> => {
     const response = await getApi().post<ApiResponse<null>>('/auth/change-password', data);
     return response.data;
   },

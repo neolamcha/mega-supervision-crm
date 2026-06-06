@@ -45,8 +45,9 @@ export default function ChangePasswordScreen() {
     setIsLoading(true);
     try {
       const response = await authApi.changePassword({
-        currentPassword,
-        newPassword,
+        motDePasseActuel: currentPassword,
+        nouveauMotDePasse: newPassword,
+        confirmation: confirmPassword,
       });
 
       if (response.success) {

@@ -81,6 +81,11 @@ export class UsersService {
       }
     }
 
+    if (updateUserDto.motDePasse) {
+      const salt = await bcrypt.genSalt(10);
+      updateUserDto.motDePasse = await bcrypt.hash(updateUserDto.motDePasse, salt);
+    }
+
     Object.assign(user, updateUserDto);
     return this.userRepository.save(user);
   }

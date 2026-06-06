@@ -1,8 +1,7 @@
-import BackgroundGeolocation from 'react-native-background-geolocation';
 import { GpsEventType, TRIGGER_RADIUS, PAUSE_START, PAUSE_END } from '../utils/constants';
 import { haversineDistance } from '../utils/haversine';
 import { getCalibratedProspects, getActiveVisit, insertGpsEvent, insertVisit, updateVisit } from './database';
-import { getCurrentPositionSync } from './location';
+import { getCurrentPositionSync, addPositionListener } from './location';
 
 function generateId(): string {
   return `evt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
@@ -30,6 +29,7 @@ let isPaused = false;
 let activeVisitId: string | null = null;
 let activeProspectId: string | null = null;
 let trackedToday: Set<string> = new Set();
+let cleanupPositionListener: (() => void) | null = null;
 
 export async function handleProximityEntry(prospectId: string): Promise<void> {
   if (activeVisitId) return;
@@ -221,27 +221,7 @@ export async function checkProximity(): Promise<void> {
 }
 
 export async function startBackgroundTracking(): Promise<void> {
-  BackgroundGeolocation.onLocation(async (location) => {
-    if (location.coords) {
-      await recordPosition();
-      await checkProximity();
-    }
-  }, (error) => {
-    console.warn('Background location error:', error);
-  });
-
-  BackgroundGeolocation.onGeofence(async (event) => {
-    const prospectId = event.extras?.prospectId;
-    if (!prospectId) return;
-
-    if (event.action === 'ENTER') {
-      await handleProximityEntry(prospectId);
-    } else if (event.action === 'EXIT') {
-      await handleProximityExit(prospectId);
-    }
-  });
-
-  BackgroundGeolocation.onHeartbeat(async () => {
+  cleanupPositionListener = addPositionListener(async (position) => {
     await recordPosition();
     await checkProximity();
   });

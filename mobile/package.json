@@ -21,7 +21,6 @@
     "axios": "^1.6.5",
     "react": "18.2.0",
     "react-native": "0.73.4",
-    "react-native-background-geolocation": "^4.16.1",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.16.0",
     "react-native-maps": "^1.10.0",

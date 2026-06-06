@@ -77,4 +77,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(UserRole, { message: 'Rôle invalide' })
   role?: UserRole;
+
+  @ApiPropertyOptional({ example: 'Password123!', description: 'Nouveau mot de passe' })
+  @IsOptional()
+  @IsString()
+  @MinLength(8, { message: 'Le mot de passe doit contenir au moins 8 caractères' })
+  motDePasse?: string;
 }

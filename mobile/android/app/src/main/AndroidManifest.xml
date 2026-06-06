@@ -38,24 +38,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name="com.transistorsoft.locationmanager.ForegroundService"
-            android:foregroundServiceType="location"
-            android:exported="false" />
-
-        <service
-            android:name="com.transistorsoft.locationmanager.BackgroundGeolocationService"
-            android:foregroundServiceType="location"
-            android:exported="false" />
-
-        <receiver
-            android:name="com.transistorsoft.locationmanager.BootReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_GOOGLE_MAPS_API_KEY" />
