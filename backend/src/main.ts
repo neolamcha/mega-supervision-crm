@@ -15,7 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
 
   const corsOrigins = process.env.APP_ENV === 'production'
-    ? [process.env.APP_URL || 'http://localhost:3000']
+    ? true
     : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'];
 
   app.enableCors({
@@ -59,7 +59,7 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.APP_PORT || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   logger.log(`Application running on port ${port}`);
   logger.log(`API Documentation available at /api/docs`);
 }
