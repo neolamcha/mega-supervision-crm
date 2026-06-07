@@ -33,7 +33,7 @@ export class ProspectsService {
     query.leftJoinAndSelect('prospect.calibrateur', 'calibrateur');
 
     if (currentUser.role === UserRole.DELEGUE) {
-      query.andWhere('prospect.calibrateurId = :userId', {
+      query.andWhere('(prospect.calibrateurId = :userId OR prospect.calibrateurId IS NULL)', {
         userId: currentUser.id,
       });
     }

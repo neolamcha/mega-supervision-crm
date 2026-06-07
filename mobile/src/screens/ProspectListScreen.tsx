@@ -43,22 +43,23 @@ export default function ProspectListScreen() {
       const response = await prospectsApi.getList({ limit: 1000 });
       if (response.success && response.data) {
         await updateProspectsFromServer(response.data);
+      } else {
+        await loadProspects();
       }
     } catch {
-      // Fallback: load from local cache
       await loadProspects();
     }
   }, [loadProspects, updateProspectsFromServer]);
 
   useEffect(() => {
-    syncAndLoad().catch(() => loadProspects());
-  }, [syncAndLoad, loadProspects]);
+    syncAndLoad();
+  }, [syncAndLoad]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await syncAndLoad().catch(() => loadProspects());
+    await syncAndLoad();
     setRefreshing(false);
-  }, [syncAndLoad, loadProspects]);
+  }, [syncAndLoad]);
 
   const handleSearch = useCallback(
     (text: string) => {
