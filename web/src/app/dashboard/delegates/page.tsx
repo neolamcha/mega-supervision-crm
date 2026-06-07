@@ -77,10 +77,11 @@ export default function DelegatesPage() {
 
   const filtered = delegates.filter(
     (d) =>
-      d.nom.toLowerCase().includes(search.toLowerCase()) ||
+      d.estActif &&
+      (d.nom.toLowerCase().includes(search.toLowerCase()) ||
       d.prenom.toLowerCase().includes(search.toLowerCase()) ||
       d.email.toLowerCase().includes(search.toLowerCase()) ||
-      d.login.toLowerCase().includes(search.toLowerCase())
+      d.login.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
