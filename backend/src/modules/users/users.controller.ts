@@ -55,7 +55,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id/hard')
+  @Delete('hard/:id')
   @Roles(UserRole.DIRECTEUR)
   @ApiOperation({ summary: 'Supprimer définitivement un utilisateur' })
   async hardRemove(@Param('id', ParseUUIDPipe) id: string) {
