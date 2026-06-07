@@ -55,27 +55,12 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete('hard/:id')
-  @Roles(UserRole.DIRECTEUR)
-  @ApiOperation({ summary: 'Supprimer définitivement un utilisateur' })
-  async hardRemove(@Param('id', ParseUUIDPipe) id: string) {
-    await this.usersService.hardDelete(id);
-    return { message: 'Utilisateur supprimé définitivement' };
-  }
-
   @Delete(':id')
   @Roles(UserRole.DIRECTEUR)
-  @ApiOperation({ summary: 'Désactiver un utilisateur (soft delete)' })
+  @ApiOperation({ summary: 'Supprimer définitivement un utilisateur (sans trace)' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    await this.usersService.softDelete(id);
-    return { message: 'Utilisateur désactivé avec succès' };
-  }
-
-  @Patch(':id/reactivate')
-  @Roles(UserRole.DIRECTEUR)
-  @ApiOperation({ summary: 'Réactiver un utilisateur' })
-  async reactivate(@Param('id', ParseUUIDPipe) id: string) {
-    return this.usersService.reactivate(id);
+    await this.usersService.hardDelete(id);
+    return { message: 'Utilisateur supprimé définitivement' };
   }
 
   @Post(':id/reset-password')

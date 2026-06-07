@@ -18,7 +18,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import DelegateForm from './components/DelegateForm';
-import { Plus, Search, Pencil, RefreshCw, UserX, UserCheck, KeyRound, Trash2 } from 'lucide-react';
+import { Plus, Search, Pencil, RefreshCw, KeyRound, Trash2 } from 'lucide-react';
 import type { User } from '@/types';
 
 export default function DelegatesPage() {
@@ -46,21 +46,6 @@ export default function DelegatesPage() {
     }
   };
 
-  const handleToggleStatus = async (delegate: User) => {
-    try {
-      if (delegate.estActif) {
-        await users.delete(delegate.id);
-        addToast('Délégué désactivé', 'success');
-      } else {
-        await users.reactivate(delegate.id);
-        addToast('Délégué réactivé', 'success');
-      }
-      loadDelegates();
-    } catch {
-      addToast('Erreur lors de la mise à jour', 'error');
-    }
-  };
-
   const handleResetPassword = async () => {
     if (!resetPasswordFor) return;
     try {
@@ -72,10 +57,10 @@ export default function DelegatesPage() {
     }
   };
 
-  const handleHardDelete = async () => {
+  const handleDelete = async () => {
     if (!deleteConfirm) return;
     try {
-      await users.hardDelete(deleteConfirm.id);
+      await users.delete(deleteConfirm.id);
       addToast('Délégué supprimé définitivement', 'success');
       setDeleteConfirm(null);
       loadDelegates();
@@ -172,14 +157,10 @@ export default function DelegatesPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleToggleStatus(delegate)}
-                          title={delegate.estActif ? 'Désactiver' : 'Réactiver'}
+                          onClick={() => setDeleteConfirm(delegate)}
+                          title="Supprimer"
                         >
-                          {delegate.estActif ? (
-                            <UserX className="h-4 w-4 text-red-500" />
-                          ) : (
-                            <UserCheck className="h-4 w-4 text-green-500" />
-                          )}
+                          <Trash2 className="h-4 w-4 text-red-600" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -188,14 +169,6 @@ export default function DelegatesPage() {
                           title="Réinitialiser mot de passe"
                         >
                           <KeyRound className="h-4 w-4 text-orange-500" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteConfirm(delegate)}
-                          title="Supprimer définitivement"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
                         </Button>
                       </div>
                     </TableCell>
@@ -236,11 +209,11 @@ export default function DelegatesPage() {
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-gray-500">
-              Êtes-vous sûr de vouloir supprimer définitivement <strong>{deleteConfirm?.prenom} {deleteConfirm?.nom}</strong> ({deleteConfirm?.login}) ? Cette action est irréversible.
+              Êtes-vous sûr de vouloir supprimer <strong>{deleteConfirm?.prenom} {deleteConfirm?.nom}</strong> ({deleteConfirm?.login}) ? Cette action est irréversible et supprime toutes les traces.
             </p>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
-              <Button variant="destructive" onClick={handleHardDelete}>Supprimer</Button>
+              <Button variant="destructive" onClick={handleDelete}>Supprimer</Button>
             </div>
           </div>
         </DialogContent>

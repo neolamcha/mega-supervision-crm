@@ -34,7 +34,7 @@ export default function AppNavigator() {
     );
   }
 
-  const needsPasswordChange = user?.premierConnexion;
+  const needsPasswordChange = user?.premierConnexion && user?.role === 'directeur';
 
   return (
     <NavigationContainer>

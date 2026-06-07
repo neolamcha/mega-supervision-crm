@@ -10,9 +10,11 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto, RefreshTokenDto, ChangePasswordDto } from './auth.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
-import { User } from '../../database/entities/user.entity';
+import { User, UserRole } from '../../database/entities/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,11 +37,12 @@ export class AuthController {
     return this.authService.refreshToken(refreshTokenDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.DIRECTEUR)
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Changer le mot de passe' })
+  @ApiOperation({ summary: 'Changer le mot de passe (directeur uniquement)' })
   async changePassword(
     @CurrentUser() user: User,
     @Body() changePasswordDto: ChangePasswordDto,

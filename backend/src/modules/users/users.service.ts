@@ -90,21 +90,9 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async softDelete(id: string): Promise<void> {
-    const user = await this.findById(id);
-    user.estActif = false;
-    await this.userRepository.save(user);
-  }
-
   async hardDelete(id: string): Promise<void> {
     const user = await this.findById(id);
     await this.userRepository.remove(user);
-  }
-
-  async reactivate(id: string): Promise<User> {
-    const user = await this.findById(id);
-    user.estActif = true;
-    return this.userRepository.save(user);
   }
 
   async resetPassword(id: string): Promise<{ temporaryPassword: string }> {
