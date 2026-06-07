@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from '../../database/entities/user.entity';
+import { RefreshToken } from '../../database/entities/refresh-token.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 
 @Injectable()
@@ -15,6 +16,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepository: Repository<RefreshToken>,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -92,6 +95,7 @@ export class UsersService {
 
   async hardDelete(id: string): Promise<void> {
     const user = await this.findById(id);
+    await this.refreshTokenRepository.delete({ userId: id });
     await this.userRepository.remove(user);
   }
 
