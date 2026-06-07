@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProspect } from '../store/prospectStore';
+import { prospectsApi } from '../services/api';
 import ProspectCard from '../components/ProspectCard';
 import EmptyState from '../components/EmptyState';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -31,20 +32,33 @@ export default function ProspectListScreen() {
     isLoading,
     loadProspects,
     searchProspectsAction,
+    updateProspectsFromServer,
   } = useProspect();
 
   const [refreshing, setRefreshing] = useState(false);
   const [searchText, setSearchText] = useState('');
 
+  const syncAndLoad = useCallback(async () => {
+    try {
+      const response = await prospectsApi.getList({ limit: 1000 });
+      if (response.success && response.data) {
+        await updateProspectsFromServer(response.data);
+      }
+    } catch {
+      // Fallback: load from local cache
+      await loadProspects();
+    }
+  }, [loadProspects, updateProspectsFromServer]);
+
   useEffect(() => {
-    loadProspects();
-  }, [loadProspects]);
+    syncAndLoad().catch(() => loadProspects());
+  }, [syncAndLoad, loadProspects]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadProspects();
+    await syncAndLoad().catch(() => loadProspects());
     setRefreshing(false);
-  }, [loadProspects]);
+  }, [syncAndLoad, loadProspects]);
 
   const handleSearch = useCallback(
     (text: string) => {
