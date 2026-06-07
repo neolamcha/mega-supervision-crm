@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await storeUser(response.data.user);
         dispatch({
           type: 'LOGIN_SUCCESS',
-          payload: { user: response.data.user, token: response.data.token },
+          payload: { user: response.data.user, token: response.data.accessToken },
         });
       } else {
         dispatch({
