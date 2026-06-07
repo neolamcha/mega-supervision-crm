@@ -9,3 +9,5 @@ dist/
 mobile/MegaSupervision-*.apk
 .gradle/
 .mega-backend/
+mobile/android/app/build/
+mobile/android/.gradle/
