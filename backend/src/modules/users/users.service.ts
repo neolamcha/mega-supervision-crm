@@ -96,6 +96,11 @@ export class UsersService {
     await this.userRepository.save(user);
   }
 
+  async hardDelete(id: string): Promise<void> {
+    const user = await this.findById(id);
+    await this.userRepository.remove(user);
+  }
+
   async reactivate(id: string): Promise<User> {
     const user = await this.findById(id);
     user.estActif = true;

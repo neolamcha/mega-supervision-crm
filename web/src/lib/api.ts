@@ -96,6 +96,8 @@ export const users = {
     }),
   delete: (id: string) =>
     request<{ message: string }>(`/users/${id}`, { method: 'DELETE' }),
+  hardDelete: (id: string) =>
+    request<{ message: string }>(`/users/${id}/hard`, { method: 'DELETE' }),
   reactivate: (id: string) =>
     request<import('@/types').User>(`/users/${id}/reactivate`, { method: 'PATCH' }),
   resetPassword: (id: string) =>

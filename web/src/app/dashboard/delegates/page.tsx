@@ -18,7 +18,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import DelegateForm from './components/DelegateForm';
-import { Plus, Search, Pencil, RefreshCw, UserX, UserCheck, KeyRound } from 'lucide-react';
+import { Plus, Search, Pencil, RefreshCw, UserX, UserCheck, KeyRound, Trash2 } from 'lucide-react';
 import type { User } from '@/types';
 
 export default function DelegatesPage() {
@@ -29,6 +29,7 @@ export default function DelegatesPage() {
   const [editingDelegate, setEditingDelegate] = useState<User | null>(null);
   const [resetPasswordFor, setResetPasswordFor] = useState<User | null>(null);
   const [newPassword, setNewPassword] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<User | null>(null);
   const { addToast } = useToast();
 
   useEffect(() => { loadDelegates(); }, []);
@@ -68,6 +69,18 @@ export default function DelegatesPage() {
       addToast('Mot de passe réinitialisé', 'success');
     } catch {
       addToast('Erreur lors de la réinitialisation', 'error');
+    }
+  };
+
+  const handleHardDelete = async () => {
+    if (!deleteConfirm) return;
+    try {
+      await users.hardDelete(deleteConfirm.id);
+      addToast('Délégué supprimé définitivement', 'success');
+      setDeleteConfirm(null);
+      loadDelegates();
+    } catch {
+      addToast('Erreur lors de la suppression', 'error');
     }
   };
 
@@ -176,6 +189,14 @@ export default function DelegatesPage() {
                         >
                           <KeyRound className="h-4 w-4 text-orange-500" />
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeleteConfirm(delegate)}
+                          title="Supprimer définitivement"
+                        >
+                          <Trash2 className="h-4 w-4 text-red-600" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -204,6 +225,24 @@ export default function DelegatesPage() {
             onSuccess={handleFormSuccess}
             onCancel={() => { setShowForm(false); setEditingDelegate(null); }}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!deleteConfirm} onOpenChange={(o) => { if (!o) setDeleteConfirm(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Supprimer le délégué</DialogTitle>
+            <DialogClose onClose={() => setDeleteConfirm(null)} />
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">
+              Êtes-vous sûr de vouloir supprimer définitivement <strong>{deleteConfirm?.prenom} {deleteConfirm?.nom}</strong> ({deleteConfirm?.login}) ? Cette action est irréversible.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
+              <Button variant="destructive" onClick={handleHardDelete}>Supprimer</Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 

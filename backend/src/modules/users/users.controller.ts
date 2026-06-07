@@ -63,6 +63,14 @@ export class UsersController {
     return { message: 'Utilisateur désactivé avec succès' };
   }
 
+  @Delete(':id/hard')
+  @Roles(UserRole.DIRECTEUR)
+  @ApiOperation({ summary: 'Supprimer définitivement un utilisateur' })
+  async hardRemove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.usersService.hardDelete(id);
+    return { message: 'Utilisateur supprimé définitivement' };
+  }
+
   @Patch(':id/reactivate')
   @Roles(UserRole.DIRECTEUR)
   @ApiOperation({ summary: 'Réactiver un utilisateur' })
